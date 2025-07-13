@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:html';
-import 'dart:ui' as ui;
+
+// Import platformViewRegistry explicitly for Flutter Web
+// ignore: uri_does_not_exist
+import 'dart:ui' 
+    if (dart.library.html) 'dart:ui_web.dart' 
+    as ui;
+
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 /// Web implementation of [createPlatformView]
@@ -12,12 +18,11 @@ class ZegoExpressPlatformViewImpl {
     const String webcamPushElement = 'plugins.zego.im/zego_express_view';
 
     if (kIsWeb) {
-      // ignore: undefined_prefixed_name
+      // Register the view factory via ui.platformViewRegistry
       ui.platformViewRegistry.registerViewFactory(webcamPushElement, (int id) {
         return DivElement()..id = "zego-view-$id";
       });
     } else {
-      // Return null or an empty Container if not web
       return null;
     }
 
