@@ -2,29 +2,20 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:html';
 
-// Import platformViewRegistry explicitly for Flutter Web
-// ignore: uri_does_not_exist
-import 'dart:ui' 
-    if (dart.library.html) 'dart:ui_web.dart' 
-    as ui;
+// ignore: undefined_prefixed_name
+@pragma('vm:entry-point')
+external dynamic get platformViewRegistry;
 
-import 'package:flutter/foundation.dart' show kIsWeb;
-
-/// Web implementation of [createPlatformView]
 class ZegoExpressPlatformViewImpl {
-  /// Create a PlatformView and return the view ID
-  static Widget? createPlatformView(Function(int viewID) onViewCreated,
-      {Key? key}) {
+  static Widget? createPlatformView(Function(int viewID) onViewCreated, {Key? key}) {
     const String webcamPushElement = 'plugins.zego.im/zego_express_view';
 
-    if (kIsWeb) {
-      // Register the view factory via ui.platformViewRegistry
-      ui.platformViewRegistry.registerViewFactory(webcamPushElement, (int id) {
-        return DivElement()..id = "zego-view-$id";
-      });
-    } else {
-      return null;
-    }
+    // ignore: undefined_prefixed_name
+    // Use the JS interop to call the platformViewRegistry
+    // The ignore is needed because it's not defined in Dart normally
+    platformViewRegistry.registerViewFactory(webcamPushElement, (int id) {
+      return DivElement()..id = "zego-view-$id";
+    });
 
     return HtmlElementView(
       key: key,
