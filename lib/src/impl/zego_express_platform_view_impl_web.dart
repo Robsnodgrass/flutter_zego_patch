@@ -2,19 +2,24 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:html';
 import 'dart:ui' as ui;
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 /// Web implementation of [createPlatformView]
 class ZegoExpressPlatformViewImpl {
   /// Create a PlatformView and return the view ID
   static Widget? createPlatformView(Function(int viewID) onViewCreated,
       {Key? key}) {
-    String webcamPushElement = 'plugins.zego.im/zego_express_view';
+    const String webcamPushElement = 'plugins.zego.im/zego_express_view';
 
-    // Register a view factory for web
-    // ignore:undefined_prefixed_name
-    ui.platformViewRegistry.registerViewFactory(webcamPushElement, (int id) {
-      return DivElement()..id = "zego-view-$id";
-    });
+    if (kIsWeb) {
+      // ignore: undefined_prefixed_name
+      ui.platformViewRegistry.registerViewFactory(webcamPushElement, (int id) {
+        return DivElement()..id = "zego-view-$id";
+      });
+    } else {
+      // Return null or an empty Container if not web
+      return null;
+    }
 
     return HtmlElementView(
       key: key,
